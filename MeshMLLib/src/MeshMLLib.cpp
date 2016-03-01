@@ -83,7 +83,7 @@ namespace KlayGE
 		int index1 = index % frame_ids.size();
 		int frame0 = frame_ids[index0];
 		int frame1 = frame_ids[index1];
-		float factor = (frame - frame0) / (frame1 - frame0);
+		float factor = MathLib::clamp((frame - frame0) / (frame1 - frame0), 0.0f, 1.0f);
 		std::pair<std::pair<Quaternion, Quaternion>, float> ret;
 		ret.first = MathLib::sclerp(bind_reals[index0], bind_duals[index0], bind_reals[index1], bind_duals[index1], factor);
 		ret.second = MathLib::lerp(bind_scales[index0], bind_scales[index1], factor);
@@ -319,7 +319,7 @@ namespace KlayGE
 
 	void MeshMLObj::SetKeyframe(int kfs_id, int kf_id, int frame_id, Quaternion const & bind_quat, float3 const & bind_pos)
 	{
-		this->SetKeyframe(kfs_id, kf_id, frame_id, bind_quat, MathLib::quat_trans_to_udq(bind_quat, bind_pos));
+		this->SetKeyframe(kfs_id, kf_id, frame_id, bind_quat, MathLib::quat_trans_to_udq(bind_quat, bind_pos * unit_scale_));
 	}
 
 	void MeshMLObj::SetKeyframe(int kfs_id, int kf_id, int frame_id, Quaternion const & bind_real, Quaternion const & bind_dual)
