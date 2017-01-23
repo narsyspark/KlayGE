@@ -586,7 +586,7 @@ namespace
 	};
 	
 	template <class T>
-	float GetInterpTime(std::vector<T> const& vec, float time, int& itime_lower, int& itime_upper)
+	float GetInterpTime(std::vector<T> const& vec, float time, size_t& itime_lower, size_t& itime_upper)
 	{
 		assert(vec.size() > 0);
 		if (vec.size() == 1)
@@ -629,13 +629,13 @@ namespace
 	void ResampleJointTransform(int start_frame, int end_frame, int fps, JointKeyframe const& okf, JointResampledKeyframe& rkf)
 	{
 		float frame_time = 1.0f / fps;
-		int i_pos = 0;
-		int i_rot = 0;
-		int i_scale = 0;
+		size_t i_pos = 0;
+		size_t i_rot = 0;
+		size_t i_scale = 0;
 		for (int i = start_frame; i <= end_frame; ++i)
 		{
 			float time = i * frame_time;
-			int prev_i = 0;
+			size_t prev_i = 0;
 			float fraction= 0.0f;
 			float3 pos_resampled(0, 0, 0);
 			float3 scale_resampled(1, 1, 1);
@@ -673,7 +673,7 @@ namespace
 		for (unsigned int ianim = 0; ianim < scene->mNumAnimations; ++ianim)
 		{
 			const aiAnimation* cur_anim = scene->mAnimations[ianim];
-			float duration = cur_anim->mDuration / cur_anim->mTicksPerSecond;
+			float duration = static_cast<float>(cur_anim->mDuration / cur_anim->mTicksPerSecond);
 			Animation anim;
 			anim.name = cur_anim->mName.C_Str();
 			anim.frame_num = int(ceilf(duration * fps));
@@ -696,19 +696,19 @@ namespace
 					for (unsigned int i = 0; i < cur_joint->mNumPositionKeys; ++i)
 					{
 						auto& p = cur_joint->mPositionKeys[i];
-						kf.pos.push_back(std::make_pair(p.mTime, AiVectorToFloat3(p.mValue)));
+						kf.pos.push_back(std::make_pair(static_cast<float>(p.mTime), AiVectorToFloat3(p.mValue)));
 					}
 					
 					for (unsigned int i = 0; i < cur_joint->mNumRotationKeys; ++i)
 					{
 						auto& p = cur_joint->mRotationKeys[i];
-						kf.quats.push_back(std::make_pair(p.mTime, AiQuatToQuat(p.mValue)));
+						kf.quats.push_back(std::make_pair(static_cast<float>(p.mTime), AiQuatToQuat(p.mValue)));
 					}
 					
 					for (unsigned int i = 0; i < cur_joint->mNumScalingKeys; ++i)
 					{
 						auto& p = cur_joint->mScalingKeys[i];
-						kf.scale.push_back(std::make_pair(p.mTime, AiVectorToFloat3(p.mValue)));
+						kf.scale.push_back(std::make_pair(static_cast<float>(p.mTime), AiVectorToFloat3(p.mValue)));
 					}
 					
 					// resample
